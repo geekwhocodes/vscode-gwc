@@ -6,11 +6,10 @@ jobs:
       BUILDARCH: x64
     steps:
       - template: win-build.yml
-
-  - job: Windows32
-    pool:
-      vmImage: VS2017-Win2016
-    variables:
-      BUILDARCH: ia32
-    steps:
-      - template: win-build.yml
+  # - job: Windows32
+  #   pool:
+  #     vmImage: VS2017-Win2016
+  #   variables:
+  #     BUILDARCH: ia32
+  #   steps:
+  #     - template: win-build.yml

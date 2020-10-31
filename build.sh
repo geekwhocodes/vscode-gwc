@@ -2,6 +2,10 @@
 
 set -ex
 
+if [["$CI_WINDOWS" == ""]]; then
+  $CI_WINDOWS = ${BUILDARCH}
+fi
+
 if [[ "$SHOULD_BUILD" == "yes" ]]; then
   npm config set scripts-prepend-node-path true
 

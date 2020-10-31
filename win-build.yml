@@ -27,13 +27,13 @@ steps:
       bash ./build.sh
     displayName: "Build"
   - bash: |
-      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\system-setup\\VSCodeSetup.exe VSCodiumSetup-$(BUILDARCH)-${LATEST_MS_TAG}.exe; fi
+      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\system-setup\\VSCodeSetup.exe vscode-gwcSetup-$(BUILDARCH)-${LATEST_MS_TAG}.exe; fi
     displayName: "move the system setup"
   - bash: |
-      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\user-setup\\VSCodeSetup.exe VSCodiumUserSetup-$(BUILDARCH)-${LATEST_MS_TAG}.exe; fi
+      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\user-setup\\VSCodeSetup.exe vscode-gwcUserSetup-$(BUILDARCH)-${LATEST_MS_TAG}.exe; fi
     displayName: "move the user setup"
   - bash: |
-      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\archive\\VSCode-win32-$(BUILDARCH).zip VSCodium-win32-$(BUILDARCH)-${LATEST_MS_TAG}.zip; fi
+      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\archive\\VSCode-win32-$(BUILDARCH).zip vscode-gwc-win32-$(BUILDARCH)-${LATEST_MS_TAG}.zip; fi
     displayName: "move the zip folder"
   - powershell: |
       bash ./sum.sh

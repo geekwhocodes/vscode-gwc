@@ -4,6 +4,7 @@ jobs:
       vmImage: VS2017-Win2016
     variables:
       BUILDARCH: x64
+      CI_WINDOWS: "True"
     steps:
       - template: win-build.yml
   # - job: Windows32

@@ -15,11 +15,13 @@ cd vscode || exit
 # apply patches
 # patch -u src/vs/platform/update/electron-main/updateService.win32.ts -i ../patches/update-cache-path.patch
 
+# https://classic.yarnpkg.com/en/docs/yarnrc/#toc-child-concurrency
 if [[ "$OS_NAME" == "osx" ]]; then
   CHILD_CONCURRENCY=1 yarn --frozen-lockfile --ignore-optional
   npm_config_argv='{"original":["--ignore-optional"]}' yarn postinstall
 else
-  CHILD_CONCURRENCY=1 yarn --frozen-lockfile
+  #CHILD_CONCURRENCY=10 
+  yarn --frozen-lockfile
   yarn postinstall
 fi
 
@@ -39,11 +41,10 @@ keyboardShortcutsUrlMac='setpath(["keyboardShortcutsUrlMac"]; "https://go.micros
 keyboardShortcutsUrlLinux='setpath(["keyboardShortcutsUrlLinux"]; "https://go.microsoft.com/fwlink/?linkid=832144")'
 keyboardShortcutsUrlWin='setpath(["keyboardShortcutsUrlWin"]; "https://go.microsoft.com/fwlink/?linkid=832145")'
 quality='setpath(["quality"]; "stable")'
-extensionsGallery='setpath(["extensionsGallery"]; {"serviceUrl": "https://open-vsx.org/vscode/gallery", "itemUrl": "https://open-vsx.org/vscode/item"})'
-linkProtectionTrustedDomains='setpath(["linkProtectionTrustedDomains"]; ["https://open-vsx.org"])'
+extensionsGallery='setpath(["extensionsGallery"]; {"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery", "itemUrl": "https://marketplace.visualstudio.com/items", "cacheUrl":"https://vscode.blob.core.windows.net/gallery/index"})'
 nameShort='setpath(["nameShort"]; "vscode-gwc")'
 nameLong='setpath(["nameLong"]; "vscode-gwc")'
-linuxIconName='setpath(["linuxIconName"]; "vscode-gwc")'
+linuxIconName='setpath(["linuxIconName"]; "com.visualstudio.code.oss")'
 applicationName='setpath(["applicationName"]; "vscode-gwc")'
 win32MutexName='setpath(["win32MutexName"]; "vscode-gwc")'
 win32DirName='setpath(["win32DirName"]; "vscode-gwc")'
@@ -56,7 +57,7 @@ urlProtocol='setpath(["urlProtocol"]; "vscode-gwc")'
 extensionAllowedProposedApi='setpath(["extensionAllowedProposedApi"]; getpath(["extensionAllowedProposedApi"]) + ["ms-vsliveshare.vsliveshare", "ms-vscode-remote.remote-ssh"])'
 serverDataFolderName='setpath(["serverDataFolderName"]; ".vscode-server-oss")'
 
-product_json_changes="${checksumFailMoreInfoUrl} | ${tipsAndTricksUrl} | ${twitterUrl} | ${requestFeatureUrl} | ${documentationUrl} | ${introductoryVideosUrl} | ${extensionAllowedBadgeProviders} | ${updateUrl} | ${releaseNotesUrl} | ${keyboardShortcutsUrlMac} | ${keyboardShortcutsUrlLinux} | ${keyboardShortcutsUrlWin} | ${quality} | ${extensionsGallery} | ${linkProtectionTrustedDomains} | ${nameShort} | ${nameLong} | ${linuxIconName} | ${applicationName} | ${win32MutexName} | ${win32DirName} | ${win32NameVersion} | ${win32RegValueName} | ${win32AppUserModelId} | ${win32ShellNameShort} | ${win32x64UserAppId} | ${urlProtocol} | ${extensionAllowedProposedApi} | ${serverDataFolderName}"
+product_json_changes="${checksumFailMoreInfoUrl} | ${tipsAndTricksUrl} | ${twitterUrl} | ${requestFeatureUrl} | ${documentationUrl} | ${introductoryVideosUrl} | ${extensionAllowedBadgeProviders} | ${updateUrl} | ${releaseNotesUrl} | ${keyboardShortcutsUrlMac} | ${keyboardShortcutsUrlLinux} | ${keyboardShortcutsUrlWin} | ${quality} | ${extensionsGallery} | ${nameShort} | ${nameLong} | ${linuxIconName} | ${applicationName} | ${win32MutexName} | ${win32DirName} | ${win32NameVersion} | ${win32RegValueName} | ${win32AppUserModelId} | ${win32ShellNameShort} | ${win32x64UserAppId} | ${urlProtocol} | ${extensionAllowedProposedApi} | ${serverDataFolderName}"
 cat product.json.bak | jq "${product_json_changes}" > product.json
 cat product.json
 

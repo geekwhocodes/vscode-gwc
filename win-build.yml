@@ -22,7 +22,7 @@ steps:
     inputs:
       filePath: "check_tags.ps1"
     env:
-    MAPPED_GITHUB_TOKEN: $(GITHUB_TOKEN)
+      MAPPED_GITHUB_TOKEN: $(GITHUB_TOKEN)
   - powershell: |
       bash ./build.sh
     displayName: "Build"

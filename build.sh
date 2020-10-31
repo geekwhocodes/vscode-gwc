@@ -3,7 +3,7 @@
 set -ex
 
 if [["$CI_WINDOWS" == ""]]; then
-  $CI_WINDOWS = ${BUILDARCH}
+  $CI_WINDOWS = ${CI_WINDOWS}
 fi
 
 if [[ "$SHOULD_BUILD" == "yes" ]]; then
@@ -14,8 +14,8 @@ if [[ "$SHOULD_BUILD" == "yes" ]]; then
   echo "BUILD_SOURCEVERSION: ${BUILD_SOURCEVERSION}"
 
   if [[ "$CI_WINDOWS" == "True" ]]; then
-    export npm_config_arch="$BUILDARCH"
-    export npm_config_target_arch="$BUILDARCH"
+    export npm_config_arch="${BUILDARCH}"
+    export npm_config_target_arch="${BUILDARCH}"
   fi
 
   . prepare_vscode.sh

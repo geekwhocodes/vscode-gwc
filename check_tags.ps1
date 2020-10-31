@@ -4,8 +4,8 @@ $USER_REPO = $REPO_URI."LocalPath"
 echo $USER_REPO
 $GITHUB_RESPONSE = curl.exe -s -H "Authorization: token $env:MAPPED_GITHUB_TOKEN" "https://api.github.com/repos$USER_REPO/releases/tags/$env:LATEST_MS_TAG"
 echo "Github response: ${GITHUB_RESPONSE}"
-$VSCODIUM_ASSETS = $GITHUB_RESPONSE | jq '.assets'
-echo "Assets: ${VSCODIUM_ASSETS}"
+$CUSTOM_ASSETS = $GITHUB_RESPONSE | jq '.assets'
+echo "Assets: ${CUSTOM_ASSETS}"
 
 # if we just don't have the github token, get out fast
 if (!$env:MAPPED_GITHUB_TOKEN -or $env:MAPPED_GITHUB_TOKEN -like "*GITHUB_TOKEN*") {
@@ -14,12 +14,12 @@ if (!$env:MAPPED_GITHUB_TOKEN -or $env:MAPPED_GITHUB_TOKEN -like "*GITHUB_TOKEN*
     return
 }
 
-if ($VSCODIUM_ASSETS -eq "null" -or !$VSCODIUM_ASSETS) {
+if ($CUSTOM_ASSETS -eq "null" -or !$CUSTOM_ASSETS) {
     echo "Release assets do not exist at all, continuing build"
     $SHOULD_BUILD = 'yes'
 }
 else {
-    $WindowsAssets = ($VSCODIUM_ASSETS | ConvertFrom-Json) | Where-Object { $_.name.Contains('exe') }
+    $WindowsAssets = ($CUSTOM_ASSETS | ConvertFrom-Json) | Where-Object { $_.name.Contains('exe') }
     $SYSTEM_SETUP = $WindowsAssets | Where-Object { $_.name.Contains('Setup') }
     $USER_SETUP = $WindowsAssets | Where-Object { $_.name.Contains('User') }
     if (!$SYSTEM_SETUP) {

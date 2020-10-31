@@ -1,0 +1,62 @@
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "12.14.1"
+  - task: UsePythonVersion@0
+    displayName: "Use Python 2.x"
+    inputs:
+      versionSpec: 2.x
+  - task: PowerShell@2
+    displayName: "Get VS code source"
+    inputs:
+      pwsh: true
+      filePath: "fetch_repo.ps1"
+  - powershell: |
+      $LATEST_MS_COMMIT="$(git -C vscode rev-list --tags --max-count=1)"
+      $LATEST_MS_TAG="$(git -C vscode describe --tags)"
+      Write-Host "##vso[task.setvariable variable=LATEST_MS_TAG]$LATEST_MS_TAG"
+      Write-Host "##vso[task.setvariable variable=LATEST_MS_COMMIT]$LATEST_MS_COMMIT"
+      Write-Host "##vso[task.setvariable variable=BUILD_SOURCEVERSION]$LATEST_MS_COMMIT"
+    displayName: "set env LATEST_MS_TAG, LATEST_MS_COMMIT"
+  - task: PowerShell@2
+    inputs:
+      filePath: "check_tags.ps1"
+    env:
+    MAPPED_GITHUB_TOKEN: $(GITHUB_TOKEN)
+  - powershell: |
+      bash ./build.sh
+    displayName: "Build"
+  - bash: |
+      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\system-setup\\VSCodeSetup.exe VSCodiumSetup-$(BUILDARCH)-${LATEST_MS_TAG}.exe; fi
+    displayName: "move the system setup"
+  - bash: |
+      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\user-setup\\VSCodeSetup.exe VSCodiumUserSetup-$(BUILDARCH)-${LATEST_MS_TAG}.exe; fi
+    displayName: "move the user setup"
+  - bash: |
+      if [[ "$SHOULD_BUILD" == "yes" ]]; then mv vscode\\.build\\win32-$(BUILDARCH)\\archive\\VSCode-win32-$(BUILDARCH).zip VSCodium-win32-$(BUILDARCH)-${LATEST_MS_TAG}.zip; fi
+    displayName: "move the zip folder"
+  - powershell: |
+      bash ./sum.sh
+    condition: eq(variables['SHOULD_BUILD'], 'yes')
+    displayName: "Compute Sums"
+  - task: CopyFiles@2
+    inputs:
+      contents: |
+        vscode-gwc*.zip
+        vscode-gwcUserSetup*.exe
+        vscode-gwcSetup*.exe
+        *.sha256
+      targetFolder: $(Build.ArtifactStagingDirectory)
+    condition: eq(variables['SHOULD_BUILD'], 'yes')
+    displayName: "Copy artifacts to staging directory"
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish artifacts"
+    condition: eq(variables['SHOULD_BUILD'], 'yes')
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: "all"
+  - bash: ./update_version.sh
+    displayName: "Update version json"
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+      GITHUB_USERNAME: $(GITHUB_USERNAME)
